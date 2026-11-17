@@ -218,3 +218,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Local API data and extraction outputs
+data/raw/
+data/processed/
+
+# Local editor settings
+.vscode/
