@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from tmdb_client import TMDbClient
+from source_system.tmdb_client import TMDbClient
 
 INPUT_PATH = Path("id_list.csv")
 OUTPUT_PATH = Path("data/processed/extraction_status.csv")

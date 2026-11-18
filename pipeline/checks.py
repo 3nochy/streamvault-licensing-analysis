@@ -1,5 +1,5 @@
 
-from tmdb_client import TMDbClient
+from source_system.tmdb_client import TMDbClient
 
 client = TMDbClient()
 
