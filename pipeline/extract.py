@@ -1,3 +1,4 @@
+import argparse
 import time
 from pathlib import Path
 
@@ -5,78 +6,61 @@ import pandas as pd
 
 from source_system.tmdb_client import TMDbClient
 
-INPUT_PATH = Path("id_list.csv")
-OUTPUT_PATH = Path("data/processed/extraction_status.csv")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+INPUT_PATH = PROJECT_ROOT / "id_list.csv"
+OUTPUT_PATH = PROJECT_ROOT / "data" / "processed" / "extraction_status.csv"
 
 
-def main():
-    # Preserve invalid values and blank lines for reporting.
-    input_df = pd.read_csv(
-        INPUT_PATH,
-        dtype=str,
-        keep_default_na=False,
-        skip_blank_lines=False,
-    )
+def prepare_source_records(input_df):
+    """Validate source columns and flag valid first-occurrence IDs."""
+    if "tmdb_id" not in input_df.columns:
+        raise ValueError("id_list.csv must contain a 'tmdb_id' column")
 
-    input_df["source_row"] = input_df.index + 2
-    input_df["tmdb_id"] = input_df["tmdb_id"].str.strip()
+    source = input_df.copy()
+    source["source_row"] = source.index + 2
+    source["tmdb_id"] = source["tmdb_id"].str.strip()
+    valid_mask = source["tmdb_id"].str.fullmatch(r"[1-9]\d*")
+    duplicate_mask = valid_mask & source["tmdb_id"].duplicated(keep="first")
+    return source, valid_mask, duplicate_mask
 
-    # Accept positive integer IDs only.
-    valid_mask = input_df["tmdb_id"].str.fullmatch(r"[1-9]\d*")
 
-    # Identify duplicate valid IDs without discarding their records.
-    duplicate_mask = (
-        valid_mask
-        & input_df["tmdb_id"].duplicated(keep="first")
-    )
-
-    client = TMDbClient()
+def extract_records(input_df, valid_mask, duplicate_mask, client):
+    """Return one movie/credits outcome for every source row."""
     results = []
-
-    for position, row in enumerate(
-        input_df.itertuples(index=False)
-    ):
+    for position, row in enumerate(input_df.itertuples(index=False)):
         raw_id = row.tmdb_id
-        source_row = row.source_row
-
         outcome = {
-            "source_row": source_row,
+            "source_row": row.source_row,
             "movie_id": raw_id,
             "movie_status": "not_attempted",
             "credits_status": "not_attempted",
             "error": None,
         }
 
-        # Keep invalid IDs in the report without calling the API.
         if not valid_mask.iloc[position]:
             outcome["movie_status"] = "invalid_id"
             outcome["credits_status"] = "invalid_id"
             results.append(outcome)
             continue
 
-        # Report duplicate IDs instead of fetching them repeatedly.
         if duplicate_mask.iloc[position]:
             outcome["movie_status"] = "duplicate_id"
             outcome["credits_status"] = "duplicate_id"
             results.append(outcome)
             continue
 
-        movie_id = int(raw_id)
-
         for endpoint in ("movie", "credits"):
             try:
-                payload = client.fetch(movie_id, endpoint)
-
-                if payload is None:
-                    outcome[f"{endpoint}_status"] = "not_found"
-                else:
-                    outcome[f"{endpoint}_status"] = "success"
-
+                payload = client.fetch(int(raw_id), endpoint)
+                outcome[f"{endpoint}_status"] = (
+                    "not_found" if payload is None else "success"
+                )
             except Exception as exc:
                 outcome[f"{endpoint}_status"] = "error"
-                error_message = (
-                    f"{endpoint}: {type(exc).__name__}: {exc}"
-                )
+                safe_error = str(exc)
+                if client.api_key:
+                    safe_error = safe_error.replace(client.api_key, "[redacted]")
+                error_message = f"{endpoint}: {type(exc).__name__}: {safe_error}"
                 outcome["error"] = (
                     f"{outcome['error']}; {error_message}"
                     if outcome["error"]
@@ -85,6 +69,30 @@ def main():
                 time.sleep(1)
 
         results.append(outcome)
+    return results
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Extract TMDb movie and credits data")
+    parser.add_argument(
+        "--refresh",
+        action="store_true",
+        help="fetch from TMDb even when a local response cache exists",
+    )
+    args = parser.parse_args()
+
+    # Preserve invalid values and blank lines for reporting.
+    input_df = pd.read_csv(
+        INPUT_PATH,
+        dtype=str,
+        keep_default_na=False,
+        skip_blank_lines=False,
+    )
+
+    input_df, valid_mask, duplicate_mask = prepare_source_records(input_df)
+
+    client = TMDbClient(force_refresh=args.refresh)
+    results = extract_records(input_df, valid_mask, duplicate_mask, client)
 
     # Retain one status row for every input row.
     status = pd.DataFrame(results)
@@ -104,7 +112,11 @@ def main():
 
     print("\nSaved:", OUTPUT_PATH)
 
-    assert len(status) == len(input_df)
+    if len(status) != len(input_df):
+        raise RuntimeError(
+            f"Extraction reconciliation failed: {len(input_df)} source rows, "
+            f"{len(status)} status rows"
+        )
 
 
 if __name__ == "__main__":

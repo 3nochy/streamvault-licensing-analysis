@@ -1,17 +1,23 @@
 
 from source_system.tmdb_client import TMDbClient
 
-client = TMDbClient()
 
-movie = client.fetch(155, "movie")
-credits = client.fetch(155, "credits")
+def main():
+    client = TMDbClient(force_refresh=True)
 
-assert movie is not None
-assert movie["id"] == 155
-assert "title" in movie
-assert credits is not None
-assert "cast" in credits
+    movie = client.fetch(155, "movie")
+    credits = client.fetch(155, "credits")
 
-print("Movie:", movie["title"])
-print("Cast entries:", len(credits["cast"]))
-print("Client checks passed.")
+    assert movie is not None
+    assert movie["id"] == 155
+    assert "title" in movie
+    assert credits is not None
+    assert "cast" in credits
+
+    print("Movie:", movie["title"])
+    print("Cast entries:", len(credits["cast"]))
+    print("Client checks passed.")
+
+
+if __name__ == "__main__":
+    main()
