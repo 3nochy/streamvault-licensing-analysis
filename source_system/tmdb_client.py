@@ -1,26 +1,34 @@
-
 import json
-import os
 import time
 from collections import defaultdict
 from datetime import datetime, timezone
-from pathlib import Path
 
 import requests
 from dotenv import load_dotenv
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-BASE_URL = "https://api.themoviedb.org/3"
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-RAW_DIR = PROJECT_ROOT / "data" / "raw"
+from pipeline.config import (
+    DOTENV_PATH,
+    RAW_DIR,
+    TMDB_API_KEY_ENV_VAR,
+    TMDB_BASE_URL as BASE_URL,
+    TMDB_REQUEST_TIMEOUT,
+    TMDB_RETRY_BACKOFF_SECONDS,
+    TMDB_RETRY_STATUS_CODES,
+    TMDB_RETRY_TOTAL,
+    TMDB_SUCCESS_REQUEST_DELAY_SECONDS,
+    TMDB_USER_AGENT,
+    get_tmdb_api_key,
+)
+
 MANIFEST_PATH = RAW_DIR / "manifest.jsonl"
 
 
 class TMDbClient:
     def __init__(self, force_refresh=False):
-        load_dotenv(PROJECT_ROOT / ".env")
-        self.api_key = os.getenv("TMDB_API_KEY")
+        load_dotenv(DOTENV_PATH)
+        self.api_key = get_tmdb_api_key()
         self.force_refresh = force_refresh
 
         RAW_DIR.mkdir(parents=True, exist_ok=True)
@@ -28,13 +36,13 @@ class TMDbClient:
 
         self.session = requests.Session()
         self.session.headers.update(
-            {"User-Agent": "StreamVault-Licensing-Analysis/1.0"}
+            {"User-Agent": TMDB_USER_AGENT}
         )
 
         retry_policy = Retry(
-            total=5,
-            backoff_factor=1,
-            status_forcelist=[429, 500, 502, 503, 504],
+            total=TMDB_RETRY_TOTAL,
+            backoff_factor=TMDB_RETRY_BACKOFF_SECONDS,
+            status_forcelist=TMDB_RETRY_STATUS_CODES,
             allowed_methods={"GET"},
             respect_retry_after_header=True,
         )
@@ -70,7 +78,8 @@ class TMDbClient:
 
         if not self.api_key:
             raise RuntimeError(
-                "TMDB_API_KEY is missing from .env; a key is required for live requests"
+                f"{TMDB_API_KEY_ENV_VAR} is missing from .env; "
+                "a key is required for live requests"
             )
 
         url = f"{BASE_URL}/movie/{movie_id}"
@@ -80,7 +89,7 @@ class TMDbClient:
         response = self.session.get(
             url,
             params={"api_key": self.api_key},
-            timeout=(3.05, 10),
+            timeout=TMDB_REQUEST_TIMEOUT,
         )
 
         # A missing film or credits resource is recorded, not retried.
@@ -103,7 +112,7 @@ class TMDbClient:
         )
 
         # A small pause between successful network requests.
-        time.sleep(0.25)
+        time.sleep(TMDB_SUCCESS_REQUEST_DELAY_SECONDS)
 
         return payload
 

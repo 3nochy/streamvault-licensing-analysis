@@ -1,13 +1,12 @@
 import argparse
-from pathlib import Path
 import sys
 
 from ipykernel.kernelspec import install as install_kernel
 import nbformat
 from nbclient import NotebookClient
+from pipeline.config import PROJECT_ROOT
 
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
 NOTEBOOKS = (
     PROJECT_ROOT / "explore" / "data_profiling.ipynb",
     PROJECT_ROOT / "explore" / "licensing_analysis.ipynb",

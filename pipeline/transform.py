@@ -1,16 +1,15 @@
 import json
 import math
 from datetime import date
-from pathlib import Path
 
 import pandas as pd
 
-
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-RAW_DIR = PROJECT_ROOT / "data" / "raw"
-PROCESSED_DIR = PROJECT_ROOT / "data" / "processed"
-ID_LIST_PATH = PROJECT_ROOT / "id_list.csv"
-STATUS_PATH = PROCESSED_DIR / "extraction_status.csv"
+from pipeline.config import (
+    EXTRACTION_STATUS_PATH as STATUS_PATH,
+    ID_LIST_PATH,
+    PROCESSED_DIR,
+    RAW_DIR,
+)
 
 
 def load_candidate_ids():

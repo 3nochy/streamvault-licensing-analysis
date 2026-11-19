@@ -1,14 +1,13 @@
 import argparse
 import time
-from pathlib import Path
 
 import pandas as pd
 
+from pipeline.config import (
+    EXTRACTION_STATUS_PATH as OUTPUT_PATH,
+    ID_LIST_PATH as INPUT_PATH,
+)
 from source_system.tmdb_client import TMDbClient
-
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-INPUT_PATH = PROJECT_ROOT / "id_list.csv"
-OUTPUT_PATH = PROJECT_ROOT / "data" / "processed" / "extraction_status.csv"
 
 
 def prepare_source_records(input_df):

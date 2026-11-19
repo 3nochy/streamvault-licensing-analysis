@@ -12,7 +12,7 @@ source .venv/bin/activate  # Windows PowerShell: .venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
 ```
 
-Copy `.env.example` to `.env` and set `TMDB_API_KEY` to a personal TMDb API key. Never commit `.env`. The first extraction needs internet access and makes two TMDb requests for each first-occurrence valid ID; successful responses are cached under `data/raw/` for later offline transformation. Use `python -m pipeline.extract --refresh` for a quarterly refresh so cached responses do not make the analysis stale.
+Copy `.env.example` to `.env` and set `TMDB_API_KEY` to a personal TMDb API key. Never commit `.env`. Shared paths and request settings are in `pipeline/config.py`. The first extraction needs internet access and makes two TMDb requests for each first-occurrence valid ID; successful responses are cached under `data/raw/` for later offline transformation. Use `python -m pipeline.extract --refresh` for a quarterly refresh so cached responses do not make the analysis stale.
 
 ## Run the workflow
 

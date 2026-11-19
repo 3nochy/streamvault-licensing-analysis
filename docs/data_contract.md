@@ -121,6 +121,7 @@ The observed transformed outputs contain 112 movie records, 320 movie-genre rela
 | `docs/adr/ADR-003-comparison-periods.md` | Documents the required comparison periods and revenue-comparability limitations. |
 | `docs/adr/ADR-004-ranking-metrics.md` | Documents the ranking metrics and their rationale. |
 | `pipeline/run_notebooks.py` | Executes the profiling and licensing notebooks in order and saves their outputs. |
+| `pipeline/config.py` | Defines shared project paths, TMDb request settings, and the API-key environment variable name. |
 | `explore/data_profiling.ipynb` | Records source and payload profiling evidence. |
 | `explore/licensing_analysis.ipynb` | Contains the comparative analysis and ranking outputs. |
 
