@@ -6,11 +6,11 @@
 
 ## Context
 
-The client supplied 127 source records. The list contains valid IDs, duplicate IDs, invalid entries, a blank row, and IDs that could not be found on TMDb. The client requires a defensible analysis and a full account of the source data. Silently dropping records would make the extraction results difficult to audit and could obscure data-quality limitations.
+The client supplied 127 source records. The list contains valid IDs, duplicate IDs, invalid entries, a blank row, and IDs that could not be found on TMDb. The client requires a defensible analysis and a full account of the source data. Silently dropping records would make the extraction results difficult to audit and could obscure data-quality limitations. The brief says the list was assembled from three sources, but the supplied one-column file does not identify which source contributed each ID.
 
 ## Decision
 
-Preserve all 127 source records in the extraction-status accounting, assign each record an explicit outcome, and use only successfully extracted, validated, unique movies in the movie-level analysis.
+Preserve all source records in the extraction-status accounting, assign each record an explicit outcome, and use only successfully extracted, validated, unique movies in the movie-level analysis. Do not infer missing source attribution. For future candidate lists, retain source attribution at intake when it is available.
 
 ## Alternatives considered
 
@@ -34,10 +34,10 @@ Preserve all 127 source records in the extraction-status accounting, assign each
 
 ## Consequences
 
-- **What this buys:** All 127 source records can be reconciled: 112 successful extractions, 6 duplicate occurrences, 4 invalid records including the blank row, and 5 not-found IDs.
-- **What this costs:** Additional status tracking, validation, and documentation are required.
+- **What this buys:** Every supplied occurrence can be reconciled without inventing facts. In the current list, the observed outcomes are 112 successful extractions, 6 duplicate occurrences, 4 invalid records including the blank row, and 5 not-found IDs.
+- **What this costs:** Additional status tracking, validation, and documentation are required. The current file cannot support source-by-source quality review because provenance was not supplied.
 - **What it costs the client if I am wrong:** Dropping or misclassifying records could distort the shortlist, conceal source-data problems, or make the analysis difficult to reproduce and audit.
-- **What would make me revisit this:** A revised source file, a change to the client's record-accounting requirements, or evidence that the current classification rules misrepresent source records.
+- **What would make me revisit this:** A revised source file with source attribution, a change to the client's record-accounting requirements, or evidence that the current classification rules misrepresent source records.
 
 ## What this survives
 
