@@ -1,5 +1,6 @@
-
 import json
+import math
+from datetime import date
 from pathlib import Path
 
 import pandas as pd
@@ -20,6 +21,8 @@ def load_candidate_ids():
         keep_default_na=False,
         skip_blank_lines=False,
     )
+    if "tmdb_id" not in source.columns:
+        raise ValueError("id_list.csv must contain a 'tmdb_id' column")
     source["source_row"] = source.index + 2
     source["tmdb_id"] = source["tmdb_id"].str.strip()
     return source
@@ -30,8 +33,84 @@ def read_json(path):
     try:
         with path.open(encoding="utf-8") as file:
             return json.load(file)
-    except (OSError, json.JSONDecodeError):
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
         return None
+
+
+def _number(value, field, *, required=False, integer=False):
+    if value is None or value == "":
+        if required:
+            raise ValueError(f"missing_{field}")
+        return None
+    try:
+        parsed = float(value)
+    except (TypeError, ValueError):
+        raise ValueError(f"invalid_{field}") from None
+    if not math.isfinite(parsed) or parsed < 0:
+        raise ValueError(f"invalid_{field}")
+    if integer:
+        if not parsed.is_integer():
+            raise ValueError(f"invalid_{field}")
+        return int(parsed)
+    return parsed
+
+
+def _validate_movie(movie):
+    title = movie.get("title")
+    if not isinstance(title, str) or not title.strip():
+        raise ValueError("missing_title")
+
+    release_date = movie.get("release_date")
+    try:
+        parsed_date = date.fromisoformat(release_date)
+    except (TypeError, ValueError):
+        raise ValueError("invalid_release_date") from None
+
+    revenue = _number(movie.get("revenue"), "revenue", required=True, integer=True)
+    vote_average = _number(movie.get("vote_average"), "vote_average")
+    vote_count = _number(movie.get("vote_count"), "vote_count", integer=True)
+    if vote_average is not None and vote_average > 10:
+        raise ValueError("invalid_vote_average")
+
+    collection = movie.get("belongs_to_collection")
+    if collection is not None and (
+        not isinstance(collection, dict) or collection.get("id") is None
+    ):
+        raise ValueError("invalid_collection_structure")
+
+    return parsed_date.year, revenue, vote_average, vote_count
+
+
+def validate_status_reconciliation(source, status):
+    required = {"source_row", "movie_id", "movie_status", "credits_status"}
+    if not required.issubset(status.columns):
+        raise ValueError("extraction status is missing required columns")
+    if status["source_row"].duplicated().any():
+        raise ValueError("extraction status contains duplicate source rows")
+    expected_rows = set(source["source_row"].astype(int))
+    actual_rows = set(status["source_row"].astype(int))
+    if expected_rows != actual_rows:
+        missing = sorted(expected_rows - actual_rows)
+        extra = sorted(actual_rows - expected_rows)
+        raise ValueError(
+            f"extraction status does not reconcile; missing={missing}, extra={extra}"
+        )
+    status_by_row = {
+        int(row.source_row): row
+        for row in status.itertuples(index=False)
+    }
+    source_by_row = {
+        int(row.source_row): row.tmdb_id
+        for row in source.itertuples(index=False)
+    }
+    mismatches = [
+        source_row
+        for source_row, source_id in source_by_row.items()
+        if status_by_row[source_row].movie_id.strip() != source_id
+    ]
+    if mismatches:
+        raise ValueError(f"source/status IDs differ at rows: {mismatches}")
+    return status_by_row
 
 
 def main():
@@ -45,10 +124,7 @@ def main():
     )
 
     # Map extraction outcomes to each source occurrence.
-    status_by_row = {
-        int(row.source_row): row
-        for row in status.itertuples(index=False)
-    }
+    status_by_row = validate_status_reconciliation(source, status)
 
     seen_ids = set()
     audit = []
@@ -120,28 +196,38 @@ def main():
             audit.append(audit_row)
             continue
 
+        if any(not isinstance(item, dict) for item in movie["genres"]):
+            audit_row["reason"] = "invalid_genre_record"
+            audit.append(audit_row)
+            continue
+        if any(not isinstance(item, dict) for item in credit["cast"]):
+            audit_row["reason"] = "invalid_cast_record"
+            audit.append(audit_row)
+            continue
+        if any(not isinstance(item, dict) for item in credit["crew"]):
+            audit_row["reason"] = "invalid_crew_record"
+            audit.append(audit_row)
+            continue
+
+        try:
+            release_year, revenue, vote_average, vote_count = _validate_movie(movie)
+        except ValueError as exc:
+            audit_row["reason"] = str(exc)
+            audit.append(audit_row)
+            continue
+
         collection = movie.get("belongs_to_collection")
-        collection_name = (
-            collection.get("name")
-            if isinstance(collection, dict)
-            else None
-        )
+        collection_name = collection.get("name") if collection else None
 
         movies.append({
             "movie_id": int(movie_id),
             "title": movie.get("title"),
             "release_date": movie.get("release_date"),
-            "release_year": (
-                int(movie["release_date"][:4])
-                if isinstance(movie.get("release_date"), str)
-                and len(movie["release_date"]) >= 4
-                and movie["release_date"][:4].isdigit()
-                else None
-            ),
+            "release_year": release_year,
             "runtime": movie.get("runtime"),
-            "revenue": movie.get("revenue"),
-            "vote_average": movie.get("vote_average"),
-            "vote_count": movie.get("vote_count"),
+            "revenue": revenue,
+            "vote_average": vote_average,
+            "vote_count": vote_count,
             "collection_id": (
                 collection.get("id")
                 if isinstance(collection, dict)
@@ -149,7 +235,7 @@ def main():
             ),
             "collection_name": collection_name,
             "licensing_type": (
-                "franchise" if collection_name else "standalone_proxy"
+                "franchise" if collection is not None else "standalone_proxy"
             ),
         })
 
