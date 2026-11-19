@@ -1,0 +1,5 @@
+period,licensing_type,movie_count,median_revenue,mean_revenue,median_rating,median_vote_count
+All years,franchise,96,578937111.0,654556698.1458334,7.601,15482.5
+All years,standalone_proxy,16,161802536.5,270271171.3125,8.443999999999999,18854.5
+2000 onward,franchise,63,786636033.0,792986415.2063493,7.45,15995.0
+2000 onward,standalone_proxy,8,283195047.5,353808227.25,8.206,18854.5

@@ -1,0 +1,6 @@
+movie_id,title,release_date,release_year,runtime,revenue,vote_average,vote_count,collection_id,collection_name,licensing_type
+27205,Inception,2010-07-15,2010,148,839030630,8.4,40754,,,standalone_proxy
+157336,Interstellar,2014-11-04,2014,169,746606706,8.493,41925,,,standalone_proxy
+10681,WALL·E,2008-06-26,2008,98,521311860,8.129,21202,,,standalone_proxy
+1422,The Departed,2006-10-04,2006,151,291465000,8.16,16939,,,standalone_proxy
+129,Spirited Away,2001-07-20,2001,125,274925095,8.537,19231,,,standalone_proxy
