@@ -27,7 +27,7 @@ def main():
     # Identify duplicate valid IDs without discarding their records.
     duplicate_mask = (
         valid_mask
-        & input_df["tmdb_id"].duplicated(keep=False)
+        & input_df["tmdb_id"].duplicated(keep="first")
     )
 
     client = TMDbClient()
