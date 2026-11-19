@@ -114,6 +114,7 @@ The observed transformed outputs contain 112 movie records, 320 movie-genre rela
 | Document | Responsibility |
 |---|---|
 | `docs/client_memo.md` | Presents the negotiation recommendation, shortlist, comparisons, deal note, and limitations for Kwame. |
+| `docs/data_findings.md` | Reconciles the candidate list and ranks its data-quality and decision risks. |
 | `docs/questions.md` | Tracks business questions, evidence available without client responses, and unresolved commercial assumptions. |
 | `docs/adr/ADR-001-source-record-accounting.md` | Documents source-record accounting and duplicate handling. |
 | `docs/adr/ADR-002-title-classification.md` | Documents the franchise and standalone-proxy classification decision. |

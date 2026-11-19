@@ -29,6 +29,6 @@ The notebook runner executes source diagnosis first and licensing analysis secon
 
 ## Outputs and limitations
 
-The client memo is in `docs/client_memo.md`. Extraction and transformation audits are written to `data/processed/`. Licensing categories are proxies based on TMDb collection membership. The $14 million budget cannot be assessed for affordability without actual quotes and rights terms. See `docs/data_contract.md`, the ADRs, and `docs/findings.md` for definitions and limitations.
+The client memo is in `docs/client_memo.md`, and the full candidate-list diagnosis is in `docs/data_findings.md`. Extraction and transformation audits are written to `data/processed/`. Licensing categories are proxies based on TMDb collection membership. The $14 million budget cannot be assessed for affordability without actual quotes and rights terms. See `docs/data_contract.md`, the ADRs, and `docs/findings.md` for pipeline rules and investigation notes.
 
 The improvement beyond the original brief—automated reconciliation and validation—is described in `docs/improvement.md`.

@@ -17,7 +17,7 @@ Franchises have higher median theatrical revenue in both periods; standalone can
 
 | What you asked for | Status | Evidence |
 |---|---|---|
-| Account for the candidate list | Complete: all 127 rows reconciled | `docs/findings.md` |
+| Account for the candidate list | Complete: all 127 rows reconciled | `docs/data_findings.md` |
 | Compare both periods and rank targets | Complete | `out/comparison_results.csv`; ranking tables |
 | Review directors and lead actors | Complete; descriptive only | `out/director_summary.csv`; `out/lead_actor_summary.csv` |
 | Record assumptions and open questions | Complete | `docs/adr/`; `docs/questions.md` |
