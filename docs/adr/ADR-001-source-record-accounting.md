@@ -32,6 +32,12 @@ Preserve all source records in the extraction-status accounting, assign each rec
 - **Why it is attractive:** Maintains traceability while allowing valid records to proceed through the pipeline.
 - **Why rejected:** Not rejected. This is the selected approach.
 
+## What the recommendation would look like under the alternatives
+
+- **If unusable rows were removed before extraction:** The currently retrieved-film rankings could look the same, but six repeats, five not-found IDs, and four invalid rows would disappear from the audit. Kwame would have no defensible count of the candidates that might change the shortlist.
+- **If the pipeline stopped at the first problem:** There would be no recommendation from this list until every invalid and unavailable record was resolved. The selected approach preserves a conditional recommendation from the 112 verified films while showing the gap.
+- **Selected approach:** Keep the negotiation shortlist provisional and disclose the eight unresolved nonblank entries that could be intended candidates.
+
 ## Consequences
 
 - **What this buys:** Every supplied occurrence can be reconciled without inventing facts. In the current list, the observed outcomes are 112 successful extractions, 6 duplicate occurrences, 4 invalid records including the blank row, and 5 not-found IDs.

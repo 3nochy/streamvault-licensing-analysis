@@ -6,7 +6,7 @@
 
 ## What I found
 
-Franchises have higher median theatrical revenue in both periods; standalone candidates have higher median audience ratings. The revenue direction does not change after 2000. The recent standalone sample is only eight films.
+Franchises lead on median theatrical revenue in both periods; standalone candidates lead on ratings. The revenue result holds since 2000, though only eight standalone films remain.
 
 | Period | Franchise median (films) | Standalone median (films) |
 |---|---:|---:|
@@ -17,21 +17,23 @@ Franchises have higher median theatrical revenue in both periods; standalone can
 
 | What you asked for | Status | Evidence |
 |---|---|---|
-| Account for the candidate list | Complete: all 127 rows reconciled | `docs/data_findings.md` |
-| Compare both periods and rank targets | Complete | `out/comparison_results.csv`; ranking tables |
-| Review directors and lead actors | Complete; descriptive only | `out/director_summary.csv`; `out/lead_actor_summary.csv` |
-| Record assumptions and open questions | Complete | `docs/adr/`; `docs/questions.md` |
+| Account for the candidate list | Complete: 127 rows reconciled | Ranked candidate diagnosis |
+| Compare periods and rank targets | Complete | Two-period comparison and shortlists |
+| Review directors and leading cast | Descriptive, not predictive | Talent findings and caveats |
+| Record assumptions and open questions | Complete | Decision records and open deal terms |
 
 ## What I recommend
 
-Prioritize franchise bundles for negotiation review, with standalone titles as alternatives. This is a negotiation order, not a purchase recommendation.
+Prioritize franchise bundles for negotiation, keeping standalone titles as alternatives. This is a negotiation order, not a purchase recommendation.
 
-**Franchises:** The Avengers Collection (4 films, $7.92B); Harry Potter Collection (8, $7.76B); Pirates of the Caribbean Collection (5, $4.53B). These rank first in both periods.
+**Franchises:** The Avengers Collection (4 films, $7.92B); Harry Potter Collection (8, $7.76B); Pirates of the Caribbean Collection (5, $4.53B). These rank first by candidate-list theatrical revenue in both periods.
 
-**Standalone candidates, all years:** Inception ($839M), Interstellar ($747M), Forrest Gump ($677M), WALL·E ($521M), Schindler’s List ($321M). **Since 2000:** Inception, Interstellar, WALL·E, The Departed, Spirited Away.
+**Standalone candidates by theatrical revenue:** All years—Inception ($839M), Interstellar ($747M), Forrest Gump ($677M), WALL·E ($521M), Schindler’s List ($321M). Since 2000—Inception ($839M), Interstellar ($747M), WALL·E ($521M), The Departed ($291M), Spirited Away ($275M).
 
-**Deal note — The Avengers Collection:** Put it first in negotiations. Its $7.92B candidate-list theatrical total is the strongest signal, just ahead of Harry Potter’s $7.76B. This does not support a price premium: theatrical revenue does not establish streaming value or licensing cost. Compare the quote and rights with an independent value estimate and the $14M budget.
+**Talent:** Anthony and Joe Russo each have two overlapping films with a $2.50B median revenue; Robert Downey Jr. has seven first-listed cast credits with a $1.41B median. These small samples do not establish reliable predictors of licensing success.
+
+**Deal note — The Avengers Collection:** Put it first in negotiations. Its $7.92B total is the strongest signal, narrowly ahead of Harry Potter’s $7.76B. Do not pay a premium on box office alone. Compare the quote and confirmed rights with an independent value estimate and the $14M budget.
 
 ## What I could not stand behind
 
-I could not verify package contents or availability, rights, territory, exclusivity, term, licensing prices, or streaming demand. Five of 117 unique valid IDs were not found and could alter rankings; six rows repeat earlier IDs, and four are invalid, including one blank. The file does not show which of its three sources supplied each title. Historical revenue is unadjusted and is not streaming revenue, profit, or licensing value. Confirm rights and value before committing funds.
+I could not verify package contents, rights, territory, exclusivity, term, prices, or streaming demand. Five candidate IDs were not found and three malformed entries could hide titles that change the rankings. Six entries repeat earlier IDs; one row is blank. The list does not identify which of its three sources supplied each entry. Box office is unadjusted and is not streaming revenue, profit, or licensing value. Confirm rights and value before committing funds.

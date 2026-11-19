@@ -32,6 +32,12 @@ Produce separate franchise-versus-standalone-proxy comparisons for all available
 - **Why it is attractive:** Preserves the broad historical view while testing whether the conclusion holds in the more recent period.
 - **Why rejected:** Not rejected. This is the selected approach.
 
+## What the recommendation would look like under the alternatives
+
+- **If only all years were reported:** Franchise candidates would still lead on median theatrical revenue ($578.9M versus $161.8M), but Kwame could not answer Finance's concern about older releases.
+- **If only titles from 2000 onward were reported:** Franchise candidates would still lead ($786.6M versus $283.2M), but the analysis would omit the required full-history view and would rely on only eight standalone candidates.
+- **Selected approach:** Keep the franchise negotiation priority in both periods and state that the evidence is historical revenue, not streaming value. The strategy does not reverse; the sample and revenue levels change.
+
 ## Consequences
 
 - **What this buys:** The client can see whether the comparison is consistent across both periods and whether older titles materially affect the conclusion.

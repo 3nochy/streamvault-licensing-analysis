@@ -32,6 +32,12 @@ Classify a movie as a franchise candidate when TMDb identifies it as belonging t
 - **Why it is attractive:** Enables a consistent comparison while making the classification limitation transparent.
 - **Why rejected:** Not rejected. This is the selected approach.
 
+## What the recommendation would look like under the alternatives
+
+- **If every movie without a collection were treated as a confirmed standalone deal:** The calculated group comparison would use the same 16 movies, but the recommendation would overstate individual licensing availability. It could send negotiators after titles the studios do not offer separately.
+- **If movies without a collection were excluded:** There would be no standalone comparison, so the project could not support a franchise-versus-standalone negotiation priority.
+- **Selected approach:** Keep the 96 collection-associated films and 16 standalone proxies in the comparison, but verify actual package contents and availability before acting.
+
 ## Consequences
 
 - **What this buys:** A reproducible classification that supports comparisons across all years and from 2000 onward.
