@@ -1,4 +1,3 @@
-
 from source_system.tmdb_client import TMDbClient
 
 

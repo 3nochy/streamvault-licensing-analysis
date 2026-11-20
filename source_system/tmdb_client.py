@@ -35,9 +35,7 @@ class TMDbClient:
         self.latest_status = self._load_latest_statuses()
 
         self.session = requests.Session()
-        self.session.headers.update(
-            {"User-Agent": TMDB_USER_AGENT}
-        )
+        self.session.headers.update({"User-Agent": TMDB_USER_AGENT})
 
         retry_policy = Retry(
             total=TMDB_RETRY_TOTAL,
@@ -61,19 +59,31 @@ class TMDbClient:
             try:
                 with cache_path.open(encoding="utf-8") as file:
                     payload = json.load(file)
+
                 self._validate_payload(payload, movie_id, endpoint)
-            except (OSError, UnicodeDecodeError, json.JSONDecodeError, ValueError):
+
+            except (
+                OSError,
+                UnicodeDecodeError,
+                json.JSONDecodeError,
+                ValueError,
+            ):
                 payload = None
             else:
-                self._record(movie_id, endpoint, "cache", "success", cache_path)
+                self._record(
+                    movie_id, endpoint, "cache", "success", cache_path
+                )
                 return payload
 
         key = (str(movie_id), endpoint)
+
         if (
             not self.force_refresh
             and self.latest_status.get(key) == "not_found"
         ):
-            self._record(movie_id, endpoint, "cache", "not_found", None)
+            self._record(
+                movie_id, endpoint, "cache", "not_found", None
+            )
             return None
 
         if not self.api_key:
@@ -83,6 +93,7 @@ class TMDbClient:
             )
 
         url = f"{BASE_URL}/movie/{movie_id}"
+
         if endpoint == "credits":
             url += "/credits"
 
@@ -101,11 +112,17 @@ class TMDbClient:
 
         response.raise_for_status()
         payload = response.json()
+
         self._validate_payload(payload, movie_id, endpoint)
 
         # Save the original response before downstream transformations.
         with cache_path.open("w", encoding="utf-8") as file:
-            json.dump(payload, file, ensure_ascii=False, indent=2)
+            json.dump(
+                payload,
+                file,
+                ensure_ascii=False,
+                indent=2,
+            )
 
         self._record(
             movie_id, endpoint, "network", "success", cache_path
@@ -118,19 +135,74 @@ class TMDbClient:
 
     @staticmethod
     def _validate_payload(payload, movie_id, endpoint):
+        """Validate the TMDb response and required nested structures."""
         if not isinstance(payload, dict):
-            raise ValueError(f"TMDb {endpoint} response must be a JSON object")
-        if str(payload.get("id")) != str(movie_id):
-            raise ValueError(f"TMDb {endpoint} response ID does not match request")
-        required = {"genres"} if endpoint == "movie" else {"cast", "crew"}
-        invalid = [key for key in required if not isinstance(payload.get(key), list)]
-        if invalid:
             raise ValueError(
-                f"TMDb {endpoint} response has invalid fields: {', '.join(sorted(invalid))}"
+                f"TMDb {endpoint} response must be a JSON object"
             )
 
-    def _record(self, movie_id, endpoint, source, status, cache_path):
-        self.latest_status[(str(movie_id), endpoint)] = status
+        if str(payload.get("id")) != str(movie_id):
+            raise ValueError(
+                f"TMDb {endpoint} response ID does not match request"
+            )
+
+        if endpoint == "movie":
+            genres = payload.get("genres")
+
+            if not isinstance(genres, list):
+                raise ValueError(
+                    "TMDb movie response field 'genres' must be a list"
+                )
+
+            for genre in genres:
+                if (
+                    not isinstance(genre, dict)
+                    or not isinstance(genre.get("id"), int)
+                    or isinstance(genre.get("id"), bool)
+                    or not isinstance(genre.get("name"), str)
+                ):
+                    raise ValueError(
+                        "TMDb movie response contains an invalid "
+                        "genre entry"
+                    )
+
+        elif endpoint == "credits":
+            for field in ("cast", "crew"):
+                entries = payload.get(field)
+
+                if not isinstance(entries, list):
+                    raise ValueError(
+                        f"TMDb credits response field '{field}' "
+                        "must be a list"
+                    )
+
+                for entry in entries:
+                    if (
+                        not isinstance(entry, dict)
+                        or not isinstance(entry.get("id"), int)
+                        or isinstance(entry.get("id"), bool)
+                    ):
+                        raise ValueError(
+                            f"TMDb credits response contains an invalid "
+                            f"'{field}' entry"
+                        )
+
+        else:
+            raise ValueError(f"Unsupported endpoint: {endpoint}")
+
+    def _record(
+        self, movie_id, endpoint, source, status, cache_path
+    ):
+        key = (str(movie_id), endpoint)
+        previous_status = self.latest_status.get(key)
+
+        # Update in-memory state for subsequent fetches.
+        self.latest_status[key] = status
+
+        # Avoid repeated manifest entries for unchanged statuses.
+        if previous_status == status:
+            return
+
         record = {
             "movie_id": movie_id,
             "endpoint": endpoint,
@@ -146,14 +218,25 @@ class TMDbClient:
     @staticmethod
     def _load_latest_statuses():
         latest = defaultdict(lambda: None)
+
         if not MANIFEST_PATH.exists():
             return latest
+
         with MANIFEST_PATH.open(encoding="utf-8") as file:
             for line in file:
                 try:
                     record = json.loads(line)
                 except json.JSONDecodeError:
                     continue
-                key = (str(record.get("movie_id")), record.get("endpoint"))
+
+                # Ignore valid JSON values that are not JSON objects.
+                if not isinstance(record, dict):
+                    continue
+
+                key = (
+                    str(record.get("movie_id")),
+                    record.get("endpoint"),
+                )
                 latest[key] = record.get("status")
+
         return latest

@@ -1,9 +1,20 @@
 import contextlib
+import importlib.util
 import io
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 
-from pipeline import checks
+
+SCRIPT_PATH = (
+    Path(__file__).resolve().parent.parent
+    / "scripts"
+    / "check_tmdb_client.py"
+)
+
+SPEC = importlib.util.spec_from_file_location("check_tmdb_client", SCRIPT_PATH)
+checks = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(checks)
 
 
 class FakeTMDbClient:
@@ -25,7 +36,9 @@ class ManualCheckTests(unittest.TestCase):
         )
         output = io.StringIO()
 
-        with patch.object(checks, "TMDbClient", return_value=client) as client_factory:
+        with patch.object(
+            checks, "TMDbClient", return_value=client
+        ) as client_factory:
             with contextlib.redirect_stdout(output):
                 checks.main()
 

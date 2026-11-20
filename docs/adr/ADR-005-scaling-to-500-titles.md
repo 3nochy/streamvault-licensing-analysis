@@ -31,9 +31,10 @@ Download, measured on the real 127-row list (Ubuntu on WSL, 20 Nov 2026):
 - Cached rerun: 9 s.
 - Scaled to 500 titles, assuming time grows in line with row count: about 8 min fresh and about 35 s cached. This is an estimate, not a measurement.
 
-Transform and analysis, measured on a synthetic 500-title set (the 112 cached films relabelled with new IDs):
-- Transform: 0.86 s, all 500 rows validated.
-- Analysis: 0.012 s.
+Transform and analysis, measured on a **synthetic 500-row test set**, not 500 distinct real TMDb titles. The test was created by relabelling the 112 cached films with new IDs, so it measures pipeline handling of a larger row count but does not validate 500-title data quality or API acquisition performance.
+
+- Transform: 0.86 s; all 500 synthetic rows validated.
+- Analysis: 0.012 s on the synthetic test set.
 
 ## What the recommendation would look like under the alternatives
 

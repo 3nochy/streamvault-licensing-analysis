@@ -40,7 +40,7 @@ Rank franchise collections by total theatrical revenue and rank standalone proxi
 
 ## Talent-summary rule
 
-Include only directors and first-listed cast members with at least two movie credits in this candidate set. Two credits allow a small within-list comparison and avoid presenting a single-film result as a pattern, but this threshold does not make a person a reliable predictor. If the threshold is wrong, one-credit talent will be omitted and people with two overlapping franchise credits may appear more dependable than they are. The summaries remain descriptive; validating prediction would require a larger independent film sample and streaming outcomes.
+Include only directors and first-listed cast members with at least two movie credits in this candidate set. The two-credit threshold is a pragmatic, analyst-selected screening rule, not a statistically validated cutoff. It permits a limited within-list comparison but does not establish that a person is a reliable predictor of licensing success. Credits can overlap: Anthony Russo and Joe Russo each receive credit for the same co-directed franchise films, so their medians are based on overlapping observations rather than independent evidence. These summaries are descriptive only. A stronger assessment would require a larger, more independent film sample and streaming outcomes; results should also be interpreted cautiously when multiple credits come from the same franchise.
 
 ## Consequences
 

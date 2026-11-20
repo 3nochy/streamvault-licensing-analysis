@@ -6,7 +6,7 @@
 
 ## What I found
 
-Franchises lead on median theatrical revenue in both periods; standalone candidates lead on ratings. The revenue result holds since 2000, though only eight standalone films remain.
+Franchises lead on median theatrical revenue in both periods; standalone candidates lead on median ratings. The revenue result holds since 2000, but the post-2000 standalone comparison includes only eight films, so its median is sensitive to individual titles and should be treated as directional rather than conclusive. Revenue figures are historical theatrical grosses, not inflation-adjusted licensing values or profit.
 
 | Period | Franchise median (films) | Standalone median (films) |
 |---|---:|---:|
@@ -30,7 +30,7 @@ Prioritize franchise bundles for negotiation, keeping standalone titles as alter
 
 **Standalone candidates by theatrical revenue:** All years—Inception ($839M), Interstellar ($747M), Forrest Gump ($677M), WALL·E ($521M), Schindler’s List ($321M). Since 2000—Inception ($839M), Interstellar ($747M), WALL·E ($521M), The Departed ($291M), Spirited Away ($275M).
 
-**Talent:** Anthony and Joe Russo each have two overlapping films with a $2.50B median revenue; Robert Downey Jr. has seven first-listed cast credits with a $1.41B median. These small samples do not establish reliable predictors of licensing success.
+**Talent:** Anthony Russo and Joe Russo each have a $2.50B median theatrical revenue across two directing credits, but these are the same overlapping co-directed films, not independent samples. Robert Downey Jr. has seven first-listed cast credits with a $1.41B median. These small, potentially overlapping samples are descriptive signals only and do not establish reliable predictors of licensing success.
 
 **Deal note — The Avengers Collection:** Put it first in negotiations. Its $7.92B total is the strongest signal, narrowly ahead of Harry Potter’s $7.76B. Do not pay a premium on box office alone. Compare the quote and confirmed rights with an independent value estimate and the $14M budget.
 

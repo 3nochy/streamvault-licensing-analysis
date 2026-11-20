@@ -84,9 +84,10 @@ class ExtractionPipelineTests(unittest.TestCase):
                 (77, "movie"): {"id": 77},
                 (77, "credits"): {"id": 77},
             })
+
             with (
-                patch.object(extract, "INPUT_PATH", source_path),
-                patch.object(extract, "OUTPUT_PATH", output_path),
+                patch("pipeline.extract.ID_LIST_PATH", source_path),
+                patch("pipeline.extract.EXTRACTION_STATUS_PATH", output_path),
                 patch.object(extract, "TMDbClient", return_value=client),
                 patch("sys.argv", ["pipeline.extract"]),
             ):

@@ -8,7 +8,9 @@ from source_system.tmdb_client import TMDbClient
 
 class TMDbPayloadValidationTests(unittest.TestCase):
     def test_accepts_movie_payload_with_expected_id_and_genres(self):
-        TMDbClient._validate_payload({"id": 155, "genres": []}, 155, "movie")
+        TMDbClient._validate_payload(
+            {"id": 155, "genres": []}, 155, "movie"
+        )
 
     def test_accepts_credits_payload_with_expected_id_and_lists(self):
         TMDbClient._validate_payload(
@@ -17,10 +19,14 @@ class TMDbPayloadValidationTests(unittest.TestCase):
 
     def test_rejects_id_mismatch(self):
         with self.assertRaisesRegex(ValueError, "ID does not match"):
-            TMDbClient._validate_payload({"id": 999, "genres": []}, 155, "movie")
+            TMDbClient._validate_payload(
+                {"id": 999, "genres": []}, 155, "movie"
+            )
 
     def test_rejects_invalid_nested_structure(self):
-        with self.assertRaisesRegex(ValueError, "invalid fields"):
+        with self.assertRaisesRegex(
+            ValueError, r"field 'cast' must be a list"
+        ):
             TMDbClient._validate_payload(
                 {"id": 155, "cast": {}, "crew": []}, 155, "credits"
             )
@@ -35,17 +41,37 @@ class TMDbManifestCacheTests(unittest.TestCase):
                 '{"movie_id": 155, "endpoint": "movie", "status": "not_found"}\n',
                 encoding="utf-8",
             )
+
             with patch("source_system.tmdb_client.MANIFEST_PATH", manifest):
                 latest = TMDbClient._load_latest_statuses()
+
             self.assertEqual(latest[("155", "movie")], "not_found")
 
     def test_ignores_malformed_manifest_lines(self):
         with tempfile.TemporaryDirectory() as directory:
             manifest = Path(directory) / "manifest.jsonl"
             manifest.write_text("bad json\n", encoding="utf-8")
+
             with patch("source_system.tmdb_client.MANIFEST_PATH", manifest):
                 latest = TMDbClient._load_latest_statuses()
+
             self.assertIsNone(latest[("155", "movie")])
+
+    def test_ignores_non_object_manifest_lines(self):
+        with tempfile.TemporaryDirectory() as directory:
+            manifest = Path(directory) / "manifest.jsonl"
+            manifest.write_text(
+                'null\n["invalid", "record"]\n'
+                '"not an object"\n'
+                '{"movie_id": 155, "endpoint": "movie", '
+                '"status": "not_found"}\n',
+                encoding="utf-8",
+            )
+
+            with patch("source_system.tmdb_client.MANIFEST_PATH", manifest):
+                latest = TMDbClient._load_latest_statuses()
+
+            self.assertEqual(latest[("155", "movie")], "not_found")
 
 
 if __name__ == "__main__":

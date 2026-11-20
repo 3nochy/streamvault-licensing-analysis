@@ -12,6 +12,14 @@ RAW_DIR = PROJECT_ROOT / "data" / "raw"
 PROCESSED_DIR = PROJECT_ROOT / "data" / "processed"
 OUTPUT_DIR = PROJECT_ROOT / "out"
 
+PROFILING_NOTEBOOK_PATH = PROJECT_ROOT / "explore" / "data_profiling.ipynb"
+LICENSING_NOTEBOOK_PATH = PROJECT_ROOT / "explore" / "licensing_analysis.ipynb"
+
+NOTEBOOK_PATHS = (
+    PROFILING_NOTEBOOK_PATH,
+    LICENSING_NOTEBOOK_PATH,
+)
+
 EXTRACTION_STATUS_PATH = PROCESSED_DIR / "extraction_status.csv"
 TRANSFORM_STATUS_PATH = PROCESSED_DIR / "transform_status.csv"
 
